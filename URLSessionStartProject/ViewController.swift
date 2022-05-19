@@ -8,9 +8,11 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    static let cardName = "Black Lotus"
+//    static let cardName = "Opt"
+    
     private let endpointClient = EndpointClient(applicationSettings: ApplicationSettingsService())
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -19,37 +21,50 @@ class ViewController: UIViewController {
     
     func executeCall() {
         let endpoint = GetNameEndpoint()
-        let completion: EndpointClient.ObjectEndpointCompletion<String> = { result, response in
+        let completion: EndpointClient.ObjectEndpointCompletion<Cards> = { result, response in
+            
             guard let responseUnwrapped = response else { return }
-
-            print("\n\n response = \(responseUnwrapped.allHeaderFields) ;\n \(responseUnwrapped.statusCode) \n")
+            print("\n\nstatus code = \(responseUnwrapped.statusCode) \n")
+            
             switch result {
             case .success(let team):
-                print("team = \(team)")
-                
+                for card in team.cards {
+                    print("\nИмя карты: \(card.name)")
+                    print("Название сета: \(card.setName)")
+                    if let type = card.type {
+                        print("Тип: \(type)")
+                    }
+                    if let manaCost = card.manaCost {
+                        print("Мановая стоимость: \(manaCost)")
+                    }
+                    if let rarity = card.rarity {
+                        print("Редкость карты: \(rarity)")
+                    }
+                    if let power = card.power {
+                        print("Сила карты: \(power)")
+                    }
+                    if let names = card.names {
+                        print("Все имена на карте: \(names)")
+                    }
+                }
             case .failure(let error):
                 print(error)
             }
         }
-        
         endpointClient.executeRequest(endpoint, completion: completion)
     }
-
-
 }
 
-final class GetNameEndpoint: ObjectResponseEndpoint<String> {
+final class GetNameEndpoint: ObjectResponseEndpoint<Cards> {
     
     override var method: RESTClient.RequestType { return .get }
     override var path: String { "/v1/cards" }
-//    override var queryItems: [URLQueryItem(name: "id", value: "1")]?
+    //    override var queryItems: [URLQueryItem(name: "id", value: "1")]?
     
     override init() {
         super.init()
-
-        queryItems = [URLQueryItem(name: "name", value: "Black Lotus")]
+        queryItems = [URLQueryItem(name: "name", value: ViewController.cardName)]
     }
-    
 }
 
 
@@ -68,7 +83,7 @@ func decodeJSONOld() {
     """
     
     let data = Data(str.utf8)
-
+    
     do {
         if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
             if let names = json["team"] as? [String] {

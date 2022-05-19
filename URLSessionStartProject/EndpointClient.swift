@@ -201,7 +201,7 @@ public final class EndpointClient {
     {
         guard let data = data else { throw EndpointClientError.noParsingData }
         do {
-            print("data = \(String(describing: (String(data: data, encoding: .utf8))))")
+//            print("data = \(String(describing: (String(data: data, encoding: .utf8))))")
             return try decoder.decode(D.self, from: data)
         } catch {
             throw error
