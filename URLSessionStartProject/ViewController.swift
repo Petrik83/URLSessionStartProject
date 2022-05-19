@@ -8,6 +8,8 @@
 import UIKit
 
 class ViewController: UIViewController {
+    static let cardName = "Black Lotus"
+//    static let cardName = "Opt"
     
     private let endpointClient = EndpointClient(applicationSettings: ApplicationSettingsService())
     
@@ -22,7 +24,7 @@ class ViewController: UIViewController {
         let completion: EndpointClient.ObjectEndpointCompletion<Cards> = { result, response in
             
             guard let responseUnwrapped = response else { return }
-            print("\n\n status code = \(responseUnwrapped.statusCode) \n")
+            print("\n\nstatus code = \(responseUnwrapped.statusCode) \n")
             
             switch result {
             case .success(let team):
@@ -61,10 +63,8 @@ final class GetNameEndpoint: ObjectResponseEndpoint<Cards> {
     
     override init() {
         super.init()
-        
-        queryItems = [URLQueryItem(name: "name", value: "Black Lotus")]
+        queryItems = [URLQueryItem(name: "name", value: ViewController.cardName)]
     }
-    
 }
 
 
